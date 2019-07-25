@@ -1,0 +1,28 @@
+<button nz-button nzType="primary" (click)="createComponentModal()">添加</button>
+<nz-spin [nzSpinning]="isSpinning" [nzDelay]="500">
+  <nz-table #basicTable [nzData]="users">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>所属部门</th>
+        <th>联系电话</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{data.realName}}</td>
+        <td>{{data.department}}</td>
+        <td>{{data.mobile}}</td>
+        <td>
+          <a>编辑</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a nz-popconfirm nzTitle="删除用户{{data.realName}}???" [nzIcon]="iconTpl" (nzOnConfirm)="userDelete(data._id)">删除</a>
+          <ng-template #iconTpl>
+              <i nz-icon nzType="question-circle-o" style="color: red;"></i>
+            </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-spin>

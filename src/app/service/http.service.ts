@@ -1,5 +1,6 @@
-
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { FuncSeviceService } from './func-sevice.service';
+import { HttpClient, HttpParams, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DataSeviceService } from './data-sevice.service';
 import { Observer, Observable, of } from 'rxjs';
@@ -10,20 +11,28 @@ import { tap, catchError, retry } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class HttpService {
-  constructor(public http: HttpClient, public dataService: DataSeviceService) { }
+  constructor(
+    public http: HttpClient,
+    public dataService: DataSeviceService,
+    public funService: FuncSeviceService,
+    public router: Router,
+    ) { }
 
   /**
    * HTTP 参数设置
    */
   httpOptions = () => {
-    this.dataService.token = localStorage.getItem('token');
+    // this.dataService.token = localStorage.getItem('token');
     const options = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type':  'application/json; charset=utf-8',
         // tslint:disable-next-line:object-literal-key-quotes
         'Authorization': 'Bearer ' + this.dataService.token
       })
     };
+    console.log(options)
     return options;
   }
 
@@ -36,6 +45,13 @@ export class HttpService {
     return (error: any): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
+      if (error.status === 401) {
+        this.router.navigateByUrl('/loign');
+        this.funService.createMessage('error', '登陆已过期，请重新登陆...');
+      } else {
+        this.funService.createMessage('error', error.error.message);
+      }
+
       // TODO: better job of transforming error for user consumption
       console.log(`${operation} failed: ${error.message}`);
       // Let the app keep running by returning an empty result.
@@ -62,23 +78,34 @@ export class HttpService {
       console.log(key, query[key]);
       queryUrl = key + '=' + query[key];
     });
-    return this.http.get(url + '?' + queryUrl, this.httpOptions());
+    return this.http.get(url + '?' + queryUrl, this.httpOptions()).pipe(
+      // catchError(this.handleError<any>(`postwithbody url=${url}`))
+      catchError(this.handleError<any>(`postwithbody url=${url}`))
+    );
   }
 
   /**
    * GET 根据URL + params 获取
    */
   getByParams = (url: string, params: string) => {
-    return this.http.get(url + '/' + params, this.httpOptions());
+    return this.http.get(url + '/' + params, this.httpOptions()).pipe(
+      // catchError(this.handleError<any>(`postwithbody url=${url}`))
+      catchError(this.handleError<any>(`postwithbody url=${url}`))
+    );
   }
 
   /**
    * POST BODY 提交
    */
-  postWithBody = (url: string, body: object) => {
+  postWithBody = (url: string, body: any) => {
     return this.http.post(url, body, this.httpOptions()).pipe(
+      // catchError(this.handleError<any>(`postwithbody url=${url}`))
       catchError(this.handleError<any>(`postwithbody url=${url}`))
     );
+  }
+
+  login(body): Observable<any> {
+    return this.postWithBody(this.dataService.login, body);
   }
 
 
@@ -104,6 +131,17 @@ export class HttpService {
    */
   userList(): Observable<any> {
     return this.getByUrl(this.dataService.userList);
+  }
+  /**
+   * 用户添加
+   * @param value 用户表单数据
+   */
+  userCreate(value: object): Observable<any> {
+    return this.postWithBody(this.dataService.userAdd, value);
+  }
+
+  userDelete(id: object): Observable<any> {
+    return this.postWithBody(this.dataService.deleteUser, id);
   }
   //#endregion
 

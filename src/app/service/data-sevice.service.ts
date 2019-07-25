@@ -7,7 +7,8 @@ export class DataSeviceService {
   constructor() { }
   token: string;
   baseUrl = 'http://127.0.0.1:7001/';
-
+  // baseUrl = 'http://124.226.215.207:7001/';
+  // baseUrl = 'https://eggapi.intlive.com/';
   /** 动态校验延迟时间 ms */
   asyncTime = 500;
 
@@ -22,7 +23,7 @@ export class DataSeviceService {
   /** 用户获取（部门ID）  */
   getUserByDepartment = this.baseUrl + 'api/userfind?department=';
   /** 用户添加 */
-  addUser = this.baseUrl + 'api/user';
+  userAdd = this.baseUrl + 'api/user';
   /** 用户删除（id） */
   deleteUser = this.baseUrl + 'api/user/delete';
   /** 用户信息修改 */

@@ -1,0 +1,19 @@
+.login-form {
+    max-width: 300px;
+  }
+
+  .login-form-forgot {
+    float: right;
+  }
+
+  .login-form-button {
+    width: 100%;
+  }
+  .fullcenter {
+    position:absolute;
+    left:40%;
+    top:30%;
+  }
+  .full {
+      height: 100%; padding: 100px 0 0; box-sizing: border-box ; background-image: url("/assets/login.jpg");
+  }

@@ -1,0 +1,68 @@
+<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+
+   <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="realName" nzRequired>
+        <span>
+          用户姓名
+          <i
+            nz-icon
+            nz-tooltip
+            nzTitle="真实用户姓名"
+            type="question-circle"
+            nzTheme="outline"
+          ></i>
+        </span>
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入用户的真实姓名!">
+        <input nz-input id="realName" formControlName="realName" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="mobile" nzRequired>
+        <span>
+            联系电话
+            <i
+              nz-icon
+              nz-tooltip
+              nzTitle="可联系的手机号码"
+              type="question-circle"
+              nzTheme="outline"
+            ></i>
+          </span>
+      </nz-form-label>
+      <nz-form-control
+        [nzSm]="14"
+        [nzXs]="24"
+        [nzValidateStatus]="validateForm.controls['mobile']"
+        [nzErrorTip]="mobileErrorTpl"
+      >
+      <ng-template #mobileErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('pattern')">
+              无效的手机号码,请继续输入...
+            </ng-container>
+            <ng-container *ngIf="control.hasError('required')">
+              请输入可联系的手机号码!
+            </ng-container>
+          </ng-template>
+          <input formControlName="mobile" id="'mobile'" nz-input />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="website" nzRequired>
+            <span>
+                    所属部门
+                    <i
+                      nz-icon
+                      nz-tooltip
+                      nzTitle="用户所在部门"
+                      type="question-circle"
+                      nzTheme="outline"
+                    ></i>
+                  </span>
+        </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入用户的所属部门!">
+        <input nz-input id="department" formControlName="department" />
+      </nz-form-control>
+    </nz-form-item>
+
+  </form>

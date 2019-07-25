@@ -14,16 +14,36 @@ export class DeviceComponent implements OnInit {
   fileList: UploadFile[] = [];
   listOfData = [];
   searchValue = '';
-
+  isSpinning = true;
+  local: any;
   constructor(private deviceService: DeviceService) { }
   ngOnInit() {
-    this.load();
+    this.local = JSON.parse(localStorage.getItem('deviceList'));
+    if (this.local) {
+      this.listOfData = this.local;
+      this.isSpinning = false;
+      this.load();
+    } else {
+      this.local = [];
+      this.load();
+    }
+
   }
 
   load = () => {
+
     this.deviceService.deviceList().subscribe((res) => {
       // console.log(res);
-      this.listOfData = res.data;
+      localStorage.setItem('deviceList', JSON.stringify(res.data));
+      if (this.local.toString() !== res.data.toString()) {
+        this.isSpinning = true;
+        setTimeout(() => {
+          this.listOfData = res.data;
+          this.isSpinning = false;
+        }, 500);
+      } else {
+        this.isSpinning = false;
+      }
     });
   }
   qrCodeReset(): void {
@@ -31,10 +51,10 @@ export class DeviceComponent implements OnInit {
     this.load();
   }
   qrCodeSearch = () => {
-   this.deviceService.deviceFind({qrCode: this.searchValue}).subscribe(res => {
-     console.log(res);
-     this.listOfData = res.data;
-   });
+    this.deviceService.deviceFind({ qrCode: this.searchValue }).subscribe(res => {
+      console.log(res);
+      this.listOfData = res.data;
+    });
   }
   incomingfile(event) {
     this.file = event.target.files[0];
@@ -45,8 +65,19 @@ export class DeviceComponent implements OnInit {
       console.log(res);
     });
   }
-  exclExport = (): boolean => {
-    return false;
+  exclExport = () => {
+    console.log('exclExport');
+
+    /* generate a worksheet */
+    const ws = XLSX.utils.json_to_sheet(this.listOfData);
+
+    /* add to workbook */
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Presidents');
+
+    /* write workbook and force a download */
+    XLSX.writeFile(wb, 'sheetjs.xlsx');
+
   }
   Upload() {
     const fileReader = new FileReader();
@@ -65,4 +96,6 @@ export class DeviceComponent implements OnInit {
     };
     fileReader.readAsArrayBuffer(this.file);
   }
+
+
 }

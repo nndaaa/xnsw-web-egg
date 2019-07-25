@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
-
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FuncSeviceService {
 
-  constructor() { }
-
+  constructor(
+    private message: NzMessageService,
+  ) { }
+  /**
+   * 数组 生成树
+   * @param data 数组数据
+   */
   toTree = (data: any) => {
     const map = {};
     // tslint:disable-next-line:no-shadowed-variable
@@ -36,6 +41,10 @@ export class FuncSeviceService {
     return val;
   }
 
+  /**
+   * 数组 生成SELECT
+   * @param data 数组数据
+   */
   toSelect = (data: any) => {
     const map = {};
     // tslint:disable-next-line:no-shadowed-variable
@@ -63,4 +72,14 @@ export class FuncSeviceService {
     });
     return val;
   }
+
+  /**
+   * 显示全局消息
+   * @param type 类型：success error warning
+   * @param msg  消息内容
+   */
+  createMessage(type: string, msg: string): void {
+    this.message.create(type, msg);
+  }
+
 }
